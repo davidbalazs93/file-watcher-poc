@@ -6,24 +6,27 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.List;
 
 public class Main {
 
   public static void main(String[] args) {
 
     //define a folder root
-    Path myDir = Paths.get("H:\\ft\\test");
+    Path myDir = Paths.get("tmp");
 
     try {
       WatchService watcher = myDir.getFileSystem().newWatchService();
-      myDir.register(watcher, StandardWatchEventKinds.ENTRY_CREATE,
-                     StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+      myDir.register(watcher,
+                     StandardWatchEventKinds.ENTRY_CREATE,
+                     StandardWatchEventKinds.ENTRY_DELETE,
+                     StandardWatchEventKinds.ENTRY_MODIFY);
 
-      WatchKey watckKey = watcher.take();
-      for (;;) {
-        List<WatchEvent<?>> events = watckKey.pollEvents();
-        for (WatchEvent event : events) {
+      WatchKey watckKey;
+      while (true) {
+        System.out.println("Watching dir for changes...");
+        watckKey = watcher.take();
+        System.out.println("Event occured:");
+        for (WatchEvent event : watckKey.pollEvents()) {
           if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
             System.out.println("Created: " + event.context().toString());
           }
